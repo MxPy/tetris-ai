@@ -174,7 +174,7 @@ class TetrisGame:
         
         #TODO: change this   
         if(self.get_max_height() >= 5):
-            reward = -self.get_max_height
+            reward = -self.get_max_height()
         
         # check lines
         line, self.lines = self.H - 1, 0
@@ -222,7 +222,7 @@ class TetrisGame:
             if self.field[0][i]:
                 reward = -50
                 game_over = True
-                self.reset()
+                #self.reset()
                 return reward, game_over, self.score
 
         pygame.display.flip()
@@ -235,8 +235,8 @@ if __name__ == "__main__":
         print(tetris_game.play_step([0,0,0,0]))
         #print(tetris_game.field)
         #print()
-        tetris_game.get_column_heights()
-        print(tetris_game.get_max_height())
+        #tetris_game.get_column_heights()
+        #print(tetris_game.get_max_height())
     
     
     
