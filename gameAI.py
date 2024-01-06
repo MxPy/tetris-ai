@@ -14,6 +14,7 @@ class TetrisGame:
         self.RES = 750, 940
         self.FPS = 60
         self.f_iteration = 0
+        self.record = 0
         pygame.init()
         self.sc = pygame.display.set_mode(self.RES)
         self.game_sc = pygame.Surface(self.GAME_RES)
@@ -61,6 +62,7 @@ class TetrisGame:
                 return False
         return True
 
+
     def get_record(self):
         try:
             with open('record') as f:
@@ -74,10 +76,17 @@ class TetrisGame:
         with open('record', 'w') as f:
             f.write(str(rec))
             
+    def reset(self):
+        self.set_record(self.record, self.score)
+        self.field = [[0 for i in range(self.W)] for i in range(self.H)]
+        self.anim_count, self.anim_speed, self.anim_limit = 0, 60, 2000
+        self.score = 0
+        self.f_iteration = 0
 
     def play_step(self, action):
+        reward = 0
         self.f_iteration += 1
-        record = self.get_record()
+        self.record = self.get_record()
         dx, rotate = 0, False
         self.sc.blit(self.bg, (0, 0))
         self.sc.blit(self.game_sc, (20, 20))
@@ -85,6 +94,7 @@ class TetrisGame:
         # delay for full lines
         for i in range(self.lines):
             pygame.time.wait(200)
+            
             
         # control
         for event in pygame.event.get():
@@ -108,8 +118,7 @@ class TetrisGame:
         elif np.array_equal(action, [0, 0, 1, 0]):
             dx = 1
         else:
-            pass
-            #self.anim_limit = 100
+            pass#self.anim_limit = 100
             
         # move x
         figure_old = deepcopy(self.figure)
@@ -157,6 +166,8 @@ class TetrisGame:
             else:
                 self.anim_speed += 3
                 self.lines += 1
+                reward = 10
+                print("sth")
         # compute score
         self.score += self.scores[self.lines]
         # draw grid
@@ -182,22 +193,25 @@ class TetrisGame:
         self.sc.blit(self.title_score, (535, 780))
         self.sc.blit(self.font.render(str(self.score), True, pygame.Color('white')), (550, 840))
         self.sc.blit(self.title_record, (525, 650))
-        self.sc.blit(self.font.render(record, True, pygame.Color('gold')), (550, 710))
+        self.sc.blit(self.font.render(self.record, True, pygame.Color('gold')), (550, 710))
         # game over
+        game_over = False
         for i in range(self.W):
             if self.field[0][i]:
-                self.set_record(record, self.score)
-                self.field = [[0 for i in range(self.W)] for i in range(self.H)]
-                self.anim_count, self.anim_speed, self.anim_limit = 0, 60, 2000
-                self.score = 0
-                self.f_iteration = 0
+                reward = -10
+                game_over = True
+                self.reset()
+                return reward, game_over, self.score
+
         pygame.display.flip()
         self.clock.tick(self.FPS)
+        return reward, game_over, self.score     
 
 if __name__ == "__main__":
     tetris_game = TetrisGame()
     while True:
-        tetris_game.play_step([0,0,0,0])
+        print(tetris_game.play_step([0,0,0,0]))
+        print(tetris_game.field)
     
     
     
