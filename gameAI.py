@@ -72,10 +72,20 @@ class TetrisGame:
             with open('record', 'w') as f:
                 f.write('0')
                 
-    def get_row_heights():
-        pass
-    def get_max_height():
-        pass
+    def get_column_heights(self):
+        x_height = [0,0,0,0,0,0,0,0,0,0]
+        for y, raw in enumerate(reversed(self.field)):
+            for x, col in enumerate(raw):
+                if col:
+                    x_height[x] = y+1
+        #print(x_height)
+        return x_height
+    
+    def get_max_height(self):
+        return max(self.get_column_heights())
+
+    def get_min_height(self):
+        return min(self.get_column_heights())
 
     def set_record(self, record, score):
         rec = max(int(record), score)
@@ -161,6 +171,11 @@ class TetrisGame:
                 if not self.check_borders():
                     self.figure = deepcopy(figure_old)
                     break
+        
+        #TODO: change this   
+        if(self.get_max_height() >= 5):
+            reward = -self.get_max_height
+        
         # check lines
         line, self.lines = self.H - 1, 0
         for row in range(self.H - 1, -1, -1):
@@ -174,7 +189,7 @@ class TetrisGame:
             else:
                 self.anim_speed += 3
                 self.lines += 1
-                reward = 10
+                reward = 50
         # compute score
         self.score += self.scores[self.lines]
         # draw grid
@@ -205,7 +220,7 @@ class TetrisGame:
         game_over = False
         for i in range(self.W):
             if self.field[0][i]:
-                reward = -10
+                reward = -50
                 game_over = True
                 self.reset()
                 return reward, game_over, self.score
@@ -219,7 +234,9 @@ if __name__ == "__main__":
     while True:
         print(tetris_game.play_step([0,0,0,0]))
         #print(tetris_game.field)
-        print(tetris_game.figures.index(tetris_game.figureAI))
+        #print()
+        tetris_game.get_column_heights()
+        print(tetris_game.get_max_height())
     
     
     

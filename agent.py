@@ -19,7 +19,7 @@ class Agent:
         self.epsilon = 0 # randomness
         self.gamma = 0.9 # discount rate
         self.memory = deque(maxlen=MAX_MEMORY) # popleft()
-        self.model = Linear_QNet(207, 512, 4)
+        self.model = Linear_QNet(17, 512, 4)
         self.trainer = QTrainer(self.model, lr=LR, gamma=self.gamma)
 
 
@@ -39,14 +39,28 @@ class Agent:
             state = [0,0,0,0,0,1,0]
         else:
             state = [0,0,0,0,0,0,1]
-    
-        i = 0
-        for y, raw in enumerate(game.field):
-            for x, col in enumerate(raw):
-                if col:
-                    state.append(1)
-                else:
-                    state.append(0)
+
+        
+        if game.get_column_heights().index(game.get_max_height()) == 0:
+            state.extend([1,0,0,0,0,0,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 1:
+            state.extend([0,1,0,0,0,0,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 2:
+            state.extend([0,0,1,0,0,0,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 3:
+            state.extend([0,0,0,1,0,0,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 4:
+            state.extend([0,0,0,0,1,0,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 5:
+            state.extend([0,0,0,0,0,1,0,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 6:
+            state.extend([0,0,0,0,0,0,1,0,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 7:
+            state.extend([0,0,0,0,0,0,0,1,0,0])
+        elif game.get_column_heights().index(game.get_max_height())  == 8:
+            state.extend([0,0,0,0,0,0,0,0,1,0])
+        else:
+            state.extend([0,0,0,0,0,0,1,0,0,1])
 
         return np.array(state, dtype=int)
 
