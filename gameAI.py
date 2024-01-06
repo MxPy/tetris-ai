@@ -12,7 +12,7 @@ class TetrisGame:
         self.TILE = 45
         self.GAME_RES = self.W * self.TILE, self.H * self.TILE
         self.RES = 750, 940
-        self.FPS = 60
+        self.FPS = 144
         self.f_iteration = 0
         self.record = 0
         pygame.init()
@@ -49,6 +49,7 @@ class TetrisGame:
         self.get_color = lambda : (randrange(30, 256), randrange(30, 256), randrange(30, 256))
 
         self.figure, self.next_figure = deepcopy(choice(self.figures)), deepcopy(choice(self.figures))
+        self.figureAI = deepcopy(self.figure)
         self.color, self.next_color = self.get_color(), self.get_color()
 
         self.score, self.lines = 0, 0
@@ -70,6 +71,11 @@ class TetrisGame:
         except FileNotFoundError:
             with open('record', 'w') as f:
                 f.write('0')
+                
+    def get_row_heights():
+        pass
+    def get_max_height():
+        pass
 
     def set_record(self, record, score):
         rec = max(int(record), score)
@@ -109,7 +115,8 @@ class TetrisGame:
                     self.anim_limit = 100
                 elif event.key == pygame.K_UP:
                     rotate = True
-            
+        
+        #AI contorl  
         # [rotate, left, right, down]
         if np.array_equal(action, [1, 0, 0, 0]):
             rotate = True
@@ -138,6 +145,7 @@ class TetrisGame:
                     for i in range(4):
                         self.field[figure_old[i].y][figure_old[i].x] = self.color
                     self.figure, self.color = self.next_figure, self.next_color
+                    self.figureAI = deepcopy(self.figure)
                     self.next_figure, self.next_color = deepcopy(choice(self.figures)), self.get_color()
                     self.anim_limit = 2000
                     break
@@ -167,7 +175,6 @@ class TetrisGame:
                 self.anim_speed += 3
                 self.lines += 1
                 reward = 10
-                print("sth")
         # compute score
         self.score += self.scores[self.lines]
         # draw grid
@@ -211,7 +218,8 @@ if __name__ == "__main__":
     tetris_game = TetrisGame()
     while True:
         print(tetris_game.play_step([0,0,0,0]))
-        print(tetris_game.field)
+        #print(tetris_game.field)
+        print(tetris_game.figures.index(tetris_game.figureAI))
     
     
     
