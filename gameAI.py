@@ -12,7 +12,7 @@ class TetrisGame:
         self.TILE = 45
         self.GAME_RES = self.W * self.TILE, self.H * self.TILE
         self.RES = 750, 940
-        self.FPS = 144
+        self.FPS = 6000
         self.f_iteration = 0
         self.record = 0
         pygame.init()
@@ -34,7 +34,7 @@ class TetrisGame:
         self.figure_rect = pygame.Rect(0, 0, self.TILE - 2, self.TILE - 2)
         self.field = [[0 for i in range(self.W)] for j in range(self.H)]
 
-        self.anim_count, self.anim_speed, self.anim_limit = 0, 60, 2000
+        self.anim_count, self.anim_speed, self.anim_limit = 0, 6000, 2000
 
         self.bg = pygame.image.load('img/bg.jpg').convert()
         self.game_bg = pygame.image.load('img/bg2.jpg').convert()
@@ -95,7 +95,7 @@ class TetrisGame:
     def reset(self):
         self.set_record(self.record, self.score)
         self.field = [[0 for i in range(self.W)] for i in range(self.H)]
-        self.anim_count, self.anim_speed, self.anim_limit = 0, 60, 2000
+        self.anim_count, self.anim_speed, self.anim_limit = 0, 6000, 2000
         self.score = 0
         self.f_iteration = 0
 
